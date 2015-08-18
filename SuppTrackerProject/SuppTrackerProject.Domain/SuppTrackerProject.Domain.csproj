@@ -43,9 +43,11 @@
     <Compile Include="Entities\Supplement.cs" />
     <Compile Include="Identity\Claim.cs" />
     <Compile Include="Identity\ExternalLogin.cs" />
+    <Compile Include="Identity\Role.cs" />
     <Compile Include="Identity\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\SupplementUser.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

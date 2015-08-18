@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SuppTrackerProject.Services.Identity
 {
-    class RoleStore
+    public class RoleStore
     {
+
     }
 }
