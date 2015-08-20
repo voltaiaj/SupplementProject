@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SuppTrackerProject.Infrastructure.Repositories
 {
-    internal class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
-        internal UserRepository(ApplicationDbContext context)
+        public UserRepository(ApplicationDbContext context)
             : base(context)
         { 
         }
