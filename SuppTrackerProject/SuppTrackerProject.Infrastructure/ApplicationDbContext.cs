@@ -1,4 +1,6 @@
-﻿using SuppTrackerProject.Infrastructure.Configuration;
+﻿using SuppTrackerProject.Domain.Entities;
+using SuppTrackerProject.Domain.Identity;
+using SuppTrackerProject.Infrastructure.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -19,5 +21,12 @@ namespace SuppTrackerProject.Infrastructure
         { 
         }
 
+        public IDbSet<User> Users { get; set; }
+        public IDbSet<SupplementUser> SupplementUsers { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            
+        }
     }
 }
