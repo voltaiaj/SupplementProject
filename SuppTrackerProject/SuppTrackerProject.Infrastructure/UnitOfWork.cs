@@ -5,9 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace SuppTrackerProject.Services
+namespace SuppTrackerProject.Infrastructure
 {
     public class UnitOfWork
     {
@@ -21,6 +22,7 @@ namespace SuppTrackerProject.Services
         {
             _context = new ApplicationDbContext();
         }
+        public UnitOfWork(string connectionString) : base(){ }
         #endregion
 
         #region UnitOfWork Members
@@ -33,6 +35,22 @@ namespace SuppTrackerProject.Services
         {
             return _context.SaveChanges();
         }
+        public Task<int> SaveChangesAsync()
+        {
+            return _context.SaveChangesAsync();
+        }
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return _context.SaveChangesAsync(cancellationToken);
+        }
         #endregion 
+
+        #region IDisposable Members
+        public void Dispose()
+        {
+            _userRepository = null;
+            _context.Dispose();
+        }
+        #endregion
     }
 }
