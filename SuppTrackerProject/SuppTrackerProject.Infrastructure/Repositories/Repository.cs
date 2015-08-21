@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SuppTrackerProject.Infrastructure.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private ApplicationDbContext _context;
         private DbSet<TEntity> _set;

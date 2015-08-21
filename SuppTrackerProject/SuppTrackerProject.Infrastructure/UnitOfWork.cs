@@ -1,4 +1,5 @@
-﻿using SuppTrackerProject.Domain.Repositories;
+﻿using SuppTrackerProject.Domain;
+using SuppTrackerProject.Domain.Repositories;
 using SuppTrackerProject.Infrastructure;
 using SuppTrackerProject.Infrastructure.Repositories;
 using System;
@@ -10,11 +11,12 @@ using System.Threading.Tasks;
 
 namespace SuppTrackerProject.Infrastructure
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         #region Fields
         public readonly ApplicationDbContext _context;
         private IUserRepository _userRepository;
+        private IRoleRepository _roleRepository;
         #endregion
 
         #region Constructor
@@ -29,6 +31,10 @@ namespace SuppTrackerProject.Infrastructure
         public IUserRepository UserRepository
         {
             get { return _userRepository ?? (_userRepository = new UserRepository(_context)); }
+        }
+        public IRoleRepository RoleRepository
+        {
+            get { return _roleRepository ?? (_roleRepository = new RoleRepository(_context)); }
         }
 
         public int SaveChanges()
@@ -48,6 +54,7 @@ namespace SuppTrackerProject.Infrastructure
         #region IDisposable Members
         public void Dispose()
         {
+            _roleRepository = null;
             _userRepository = null;
             _context.Dispose();
         }
