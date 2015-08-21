@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SuppTrackerProject.Domain.Entities;
+using SuppTrackerProject.Domain.Identity;
+using SuppTrackerProject.Infrastructure.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -9,6 +12,21 @@ namespace SuppTrackerProject.Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {
-        
+        public ApplicationDbContext()
+            : this(ConnectionInfo.CONNECTIONSTRING)
+        { 
+        }
+        public ApplicationDbContext(string nameOrConnectionString)
+            : base(nameOrConnectionString)
+        { 
+        }
+
+        public IDbSet<User> Users { get; set; }
+        public IDbSet<SupplementUser> SupplementUsers { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            
+        }
     }
 }
