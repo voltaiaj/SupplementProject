@@ -17,6 +17,7 @@ namespace SuppTrackerProject.Infrastructure
         public readonly ApplicationDbContext _context;
         private IUserRepository _userRepository;
         private IRoleRepository _roleRepository;
+        private IExternalLoginRepository _externalLoginRepository;
         #endregion
 
         #region Constructor
@@ -28,14 +29,19 @@ namespace SuppTrackerProject.Infrastructure
         #endregion
 
         #region UnitOfWork Members
-        public IUserRepository UserRepository
+        public IExternalLoginRepository ExternalLoginRepository
         {
-            get { return _userRepository ?? (_userRepository = new UserRepository(_context)); }
+            get { return _externalLoginRepository ?? (_externalLoginRepository = new ExternalLoginRepository(_context)); }
         }
         public IRoleRepository RoleRepository
         {
             get { return _roleRepository ?? (_roleRepository = new RoleRepository(_context)); }
         }
+        public IUserRepository UserRepository
+        {
+            get { return _userRepository ?? (_userRepository = new UserRepository(_context)); }
+        }
+        
 
         public int SaveChanges()
         {
@@ -54,6 +60,7 @@ namespace SuppTrackerProject.Infrastructure
         #region IDisposable Members
         public void Dispose()
         {
+            _externalLoginRepository = null;
             _roleRepository = null;
             _userRepository = null;
             _context.Dispose();

@@ -12,5 +12,6 @@ namespace SuppTrackerProject.Domain
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         IUserRepository UserRepository { get; }
         IRoleRepository RoleRepository { get; }
+        IExternalLoginRepository ExternalLoginRepository { get; }
     }
 }
