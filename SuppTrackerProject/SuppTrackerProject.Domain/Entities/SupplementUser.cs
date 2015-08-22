@@ -22,10 +22,13 @@ namespace SuppTrackerProject.Domain.Entities
         [InverseProperty("Users")]
         public int SupplementId { get; set; }
         public virtual Supplement Supplement { get; set; }
-
+        [Required]
         public double ServingsPerDay { get; set; }
+        [Required]
         public double EmptyWeight { get; set; }
+        [Required]
         public double PartialWeight { get; set; }
+        [Required]
         public double FullWeight { get; set; }
         public double NumberOfNew { get; set; }
     }
