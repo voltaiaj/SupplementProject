@@ -22,6 +22,7 @@ namespace SuppTrackerProject.Infrastructure
         }
 
         public IDbSet<User> Users { get; set; }
+        public IDbSet<Supplement> Supplements { get; set; }
         public IDbSet<SupplementUser> SupplementUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
