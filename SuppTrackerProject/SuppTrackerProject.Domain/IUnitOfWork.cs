@@ -1,4 +1,5 @@
-﻿using SuppTrackerProject.Domain.Repositories;
+﻿using SuppTrackerProject.Domain.Entities;
+using SuppTrackerProject.Domain.Repositories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,5 +14,7 @@ namespace SuppTrackerProject.Domain
         IUserRepository UserRepository { get; }
         IRoleRepository RoleRepository { get; }
         IExternalLoginRepository ExternalLoginRepository { get; }
+        IRepository<Supplement> SupplementRepository { get; }
+        IRepository<SupplementUser> SupplementUserRepository { get; }
     }
 }

@@ -11,8 +11,11 @@ namespace SuppTrackerProject.Domain.Entities
     {
         [Key]
         public int SupplementId { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Manufacturer { get; set; }
+        [Required]
         public int Servings { get; set; }
 
         public virtual  ICollection<SupplementUser> Users { get; set; }
