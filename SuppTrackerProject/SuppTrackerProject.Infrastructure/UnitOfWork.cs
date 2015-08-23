@@ -1,4 +1,5 @@
 ﻿using SuppTrackerProject.Domain;
+using SuppTrackerProject.Domain.Entities;
 using SuppTrackerProject.Domain.Repositories;
 using SuppTrackerProject.Infrastructure;
 using SuppTrackerProject.Infrastructure.Repositories;
@@ -18,6 +19,8 @@ namespace SuppTrackerProject.Infrastructure
         private IUserRepository _userRepository;
         private IRoleRepository _roleRepository;
         private IExternalLoginRepository _externalLoginRepository;
+        private IRepository<Supplement> _supplementRepository;
+        private IRepository<SupplementUser> _supplementUserRepository;
         #endregion
 
         #region Constructor
@@ -41,7 +44,14 @@ namespace SuppTrackerProject.Infrastructure
         {
             get { return _userRepository ?? (_userRepository = new UserRepository(_context)); }
         }
-        
+        public IRepository<Supplement> SupplementRepository
+        {
+            get { return _supplementRepository ?? (_supplementRepository = new Repository<Supplement>(_context)); }
+        }
+        public IRepository<SupplementUser> SupplementUserRepository
+        {
+            get { return _supplementUserRepository ?? (_supplementUserRepository = new Repository<SupplementUser>(_context)); }
+        }
 
         public int SaveChanges()
         {
@@ -62,6 +72,8 @@ namespace SuppTrackerProject.Infrastructure
         {
             _externalLoginRepository = null;
             _roleRepository = null;
+            _supplementRepository = null;
+            _supplementUserRepository = null;
             _userRepository = null;
             _context.Dispose();
         }

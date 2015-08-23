@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculators\SupplementExtensionCalcs.cs" />
+    <Compile Include="Data\SupplementService.cs" />
+    <Compile Include="Data\SupplementUserService.cs" />
     <Compile Include="Identity\IdentityRole.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\RoleStore.cs" />

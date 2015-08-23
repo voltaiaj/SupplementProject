@@ -15,7 +15,7 @@ namespace SuppTrackerProject.Domain.Entities
         public int SuppUserId { get; set; }
         [ForeignKey("User")]
         [InverseProperty("Supplements")]
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         public virtual User User { get; set; }
 
         [ForeignKey("Supplement")]
