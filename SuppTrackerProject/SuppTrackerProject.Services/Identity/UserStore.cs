@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using SuppTrackerProject.Domain;
+using SuppTrackerProject.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,11 @@ namespace SuppTrackerProject.Services.Identity
     public class UserStore : IUserLoginStore<IdentityUser, Guid>, IUserClaimStore<IdentityUser, Guid>, IUserRoleStore<IdentityUser, Guid>, IUserPasswordStore<IdentityUser, Guid>, IUserSecurityStampStore<IdentityUser, Guid>, IUserStore<IdentityUser, Guid>, IDisposable
     {
         private readonly IUnitOfWork _unitOfWork;
+
+        public UserStore()
+            : this(new UnitOfWork())
+        { 
+        }
 
         public UserStore(IUnitOfWork unitOfWork)
         {
