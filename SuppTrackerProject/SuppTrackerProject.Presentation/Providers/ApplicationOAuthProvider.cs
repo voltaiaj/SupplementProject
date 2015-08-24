@@ -4,12 +4,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using SuppTrackerProject.Presentation.Models;
+using SuppTrackerProject.Services.Identity;
 
 namespace SuppTrackerProject.Presentation.Providers
 {
@@ -29,9 +29,9 @@ namespace SuppTrackerProject.Presentation.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            var userManager = new UserManager<IdentityUser,Guid>(new UserStore());
 
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
+            IdentityUser user = await userManager.FindAsync(context.UserName, context.Password);
 
             if (user == null)
             {

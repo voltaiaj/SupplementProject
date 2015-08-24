@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
@@ -16,6 +15,7 @@ using Microsoft.Owin.Security.OAuth;
 using SuppTrackerProject.Presentation.Models;
 using SuppTrackerProject.Presentation.Providers;
 using SuppTrackerProject.Presentation.Results;
+using SuppTrackerProject.Services.Identity;
 
 namespace SuppTrackerProject.Presentation.Controllers
 {
@@ -24,24 +24,25 @@ namespace SuppTrackerProject.Presentation.Controllers
     public class AccountController : ApiController
     {
         private const string LocalLoginProvider = "Local";
-        private ApplicationUserManager _userManager;
+        private UserManager<IdentityUser,Guid> _userManager;
 
         public AccountController()
         {
+            _userManager = new UserManager<IdentityUser, Guid>(new UserStore());
         }
 
-        public AccountController(ApplicationUserManager userManager,
+        public AccountController(UserManager<IdentityUser, Guid> userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
-            UserManager = userManager;
+            _userManager = userManager;
             AccessTokenFormat = accessTokenFormat;
         }
 
-        public ApplicationUserManager UserManager
+        public UserManager<IdentityUser, Guid> UserManager
         {
             get
             {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return _userManager ?? Request.GetOwinContext().GetUserManager<UserManager<IdentityUser, Guid>>();
             }
             private set
             {
@@ -50,6 +51,13 @@ namespace SuppTrackerProject.Presentation.Controllers
         }
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
+
+        private Guid getGuid(string value)
+        {
+            var result = default(Guid);
+            Guid.TryParse(value, out result);
+            return result;
+        }   
 
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
@@ -78,7 +86,7 @@ namespace SuppTrackerProject.Presentation.Controllers
         [Route("ManageInfo")]
         public async Task<ManageInfoViewModel> GetManageInfo(string returnUrl, bool generateState = false)
         {
-            IdentityUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            IdentityUser user = await _userManager.FindByIdAsync(getGuid(User.Identity.GetUserId()));
 
             if (user == null)
             {
@@ -87,14 +95,14 @@ namespace SuppTrackerProject.Presentation.Controllers
 
             List<UserLoginInfoViewModel> logins = new List<UserLoginInfoViewModel>();
 
-            foreach (IdentityUserLogin linkedAccount in user.Logins)
-            {
-                logins.Add(new UserLoginInfoViewModel
-                {
-                    LoginProvider = linkedAccount.LoginProvider,
-                    ProviderKey = linkedAccount.ProviderKey
-                });
-            }
+            //foreach (IdentityUserLogin linkedAccount in user.Logins)
+            //{
+            //    logins.Add(new UserLoginInfoViewModel
+            //    {
+            //        LoginProvider = linkedAccount.LoginProvider,
+            //        ProviderKey = linkedAccount.ProviderKey
+            //    });
+            //}
 
             if (user.PasswordHash != null)
             {
@@ -123,7 +131,7 @@ namespace SuppTrackerProject.Presentation.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
+            IdentityResult result = await _userManager.ChangePasswordAsync(getGuid(User.Identity.GetUserId()), model.OldPassword,
                 model.NewPassword);
             
             if (!result.Succeeded)
@@ -143,7 +151,7 @@ namespace SuppTrackerProject.Presentation.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+            IdentityResult result = await _userManager.AddPasswordAsync(getGuid(User.Identity.GetUserId()), model.NewPassword);
 
             if (!result.Succeeded)
             {
@@ -180,7 +188,7 @@ namespace SuppTrackerProject.Presentation.Controllers
                 return BadRequest("The external login is already associated with an account.");
             }
 
-            IdentityResult result = await UserManager.AddLoginAsync(User.Identity.GetUserId(),
+            IdentityResult result = await _userManager.AddLoginAsync(getGuid(User.Identity.GetUserId()),
                 new UserLoginInfo(externalData.LoginProvider, externalData.ProviderKey));
 
             if (!result.Succeeded)
@@ -204,11 +212,11 @@ namespace SuppTrackerProject.Presentation.Controllers
 
             if (model.LoginProvider == LocalLoginProvider)
             {
-                result = await UserManager.RemovePasswordAsync(User.Identity.GetUserId());
+                result = await _userManager.RemovePasswordAsync(getGuid(User.Identity.GetUserId()));
             }
             else
             {
-                result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(),
+                result = await _userManager.RemoveLoginAsync(getGuid(User.Identity.GetUserId()),
                     new UserLoginInfo(model.LoginProvider, model.ProviderKey));
             }
 
@@ -250,7 +258,7 @@ namespace SuppTrackerProject.Presentation.Controllers
                 return new ChallengeResult(provider, this);
             }
 
-            ApplicationUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
+            IdentityUser user = await _userManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
                 externalLogin.ProviderKey));
 
             bool hasRegistered = user != null;
@@ -328,7 +336,12 @@ namespace SuppTrackerProject.Presentation.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new IdentityUser() 
+            { 
+                UserName = model.Email, 
+                FirstName = model.FirstName,
+                LastName = model.LastName
+            };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -357,7 +370,7 @@ namespace SuppTrackerProject.Presentation.Controllers
                 return InternalServerError();
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new IdentityUser() { UserName = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user);
             if (!result.Succeeded)

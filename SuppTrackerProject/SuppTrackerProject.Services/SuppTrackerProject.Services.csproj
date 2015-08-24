@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculators\SupplementExtensionCalcs.cs" />
+    <Compile Include="Data\DataServices.cs" />
     <Compile Include="Data\SupplementService.cs" />
     <Compile Include="Data\SupplementUserService.cs" />
     <Compile Include="Identity\IdentityRole.cs" />
@@ -63,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
