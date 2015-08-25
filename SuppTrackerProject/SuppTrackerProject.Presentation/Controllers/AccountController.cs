@@ -16,6 +16,7 @@ using SuppTrackerProject.Presentation.Models;
 using SuppTrackerProject.Presentation.Providers;
 using SuppTrackerProject.Presentation.Results;
 using SuppTrackerProject.Services.Identity;
+using SuppTrackerProject.Presentation.App_Start;
 
 namespace SuppTrackerProject.Presentation.Controllers
 {
@@ -24,11 +25,12 @@ namespace SuppTrackerProject.Presentation.Controllers
     public class AccountController : ApiController
     {
         private const string LocalLoginProvider = "Local";
+        private ApplicationSignInManager _signInManager;
         private UserManager<IdentityUser,Guid> _userManager;
 
         public AccountController()
         {
-            _userManager = new UserManager<IdentityUser, Guid>(new UserStore());
+            _userManager = new UserManager<IdentityUser, Guid>(new UserStore());            
         }
 
         public AccountController(UserManager<IdentityUser, Guid> userManager,
@@ -36,6 +38,18 @@ namespace SuppTrackerProject.Presentation.Controllers
         {
             _userManager = userManager;
             AccessTokenFormat = accessTokenFormat;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
         }
 
         public UserManager<IdentityUser, Guid> UserManager
@@ -57,7 +71,13 @@ namespace SuppTrackerProject.Presentation.Controllers
             var result = default(Guid);
             Guid.TryParse(value, out result);
             return result;
-        }   
+        }
+
+        [Route("Login")]
+        public Task<SignInStatus> Login(LoginViewModel model)
+        {
+            return SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+        }
 
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
