@@ -13,31 +13,15 @@ namespace SuppTrackerProject.Presentation.Controllers
 {
     public class UserController : Controller
     {
-        private DataServices _dataServices;
-        private AccountController _accountController = new AccountController();
+        private DataServices _dataServices;        
 
-        [HttpPost]
-        public ActionResult Index(LoginViewModel model)
-        {
-            var result = _accountController.Login(model);
-            switch (result.Result)
-            {
-                case SignInStatus.Success:
-                    //return RedirectToLocal(returnUrl);
-                    TempData["loginModel"] = model;
-                    return RedirectToAction("Index", "User");
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
-            //Guid userId = Guid.Parse(User.Identity.GetUserId());
-            //IList<SupplementUser> result = _dataServices.SupplementUserService.GetSupplementUsersByUserId(userId);
-            return View();
+        [Authorize]
+        [HttpGet]
+        public ActionResult Index()
+        {           
+            Guid userId = Guid.Parse(User.Identity.GetUserId());
+            IList<SupplementUser> result = _dataServices.SupplementUserService.GetSupplementUsersByUserId(userId);            
+            return View(result);
         }
     }
 }
